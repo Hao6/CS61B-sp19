@@ -13,7 +13,9 @@ public class GuitarHeroLite {
         while (true) {
 
             /* check if the user has typed a key; if so, process it */
+
             if (StdDraw.hasNextKeyTyped()) {
+//                System.out.println("get a shuru");
                 char key = StdDraw.nextKeyTyped();
                 if (key == 'a') {
                     stringA.pluck();

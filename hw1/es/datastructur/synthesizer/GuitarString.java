@@ -1,5 +1,8 @@
 package es.datastructur.synthesizer;
 
+import java.util.HashSet;
+import java.util.Set;
+
 //Note: This file will not compile until you complete task 1 (BoundedQueue).
 public class GuitarString {
     /** Constants. Do not change. In case you're curious, the keyword final
@@ -16,6 +19,10 @@ public class GuitarString {
         //       cast the result of this division operation into an int. For
         //       better accuracy, use the Math.round() function before casting.
         //       Your buffer should be initially filled with zeros.
+        buffer = new ArrayRingBuffer<Double>((int)Math.round(SR / frequency));
+        while (!buffer.isFull()) {
+            buffer.enqueue(0.0);
+        }
     }
 
 
@@ -27,6 +34,17 @@ public class GuitarString {
         //
         //       Make sure that your random numbers are different from each
         //       other.
+        Set<Double> s = new HashSet<>(buffer.capacity());
+        while (!buffer.isEmpty()) {
+            buffer.dequeue();
+        }
+        while (!buffer.isFull()) {
+            double newNoise = Math.random() - 0.5;
+            if (!s.contains(newNoise)) {
+                s.add(newNoise);
+                buffer.enqueue(newNoise);
+            }
+        }
     }
 
     /* Advance the simulation one time step by performing one iteration of
@@ -36,12 +54,14 @@ public class GuitarString {
         // TODO: Dequeue the front sample and enqueue a new sample that is
         //       the average of the two multiplied by the DECAY factor.
         //       Do not call StdAudio.play().
+        Double curSample = buffer.dequeue();
+        buffer.enqueue(DECAY * 0.5 * (curSample + buffer.peek()));
     }
 
     /* Return the double at the front of the buffer. */
     public double sample() {
         // TODO: Return the correct thing.
-        return 0;
+        return buffer.peek();
     }
 }
     // TODO: Remove all comments that say TODO when you're done.
