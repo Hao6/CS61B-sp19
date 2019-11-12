@@ -82,6 +82,33 @@ public class BST<Key extends Comparable<Key>> {
             this.key = key;
             this.size = size;
         }
+
+        /**
+         * 判断当前node是否是叶子node
+         * @return
+         */
+        private boolean isLeaf() {
+            return left == null && right == null;
+        }
+
+        /**
+         * 计算BST所有node的深度之和
+         * @param curDepth,当前深度
+         * @return 当前树的所有结点深度之和
+         */
+        private int calSumDepth(int curDepth) {
+            if (isLeaf()) {
+                return curDepth;
+            }
+            int resSumDepth = 0;
+            if (left != null) {
+                resSumDepth += left.calSumDepth(curDepth+1);
+            }
+            if (right != null) {
+                resSumDepth += right.calSumDepth(curDepth+1);
+            }
+            return curDepth + resSumDepth;
+        }
     }
 
     /* Returns a tree with key deleted from the tree rooted at x. */
@@ -245,5 +272,17 @@ public class BST<Key extends Comparable<Key>> {
      */
     private boolean isEmpty() {
         return size() == 0;
+    }
+
+    /**
+     * 计算BST的平均深度
+     * @return 平均深度
+     */
+    public double calAverageDepth() {
+        if (root != null) {
+            return root.calSumDepth(0)*1.0 / size();
+        } else {
+            return 0;
+        }
     }
 }
