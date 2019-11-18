@@ -14,7 +14,7 @@ public class NaivePointSet implements PointSet{
     private List<Point> points;
 
     public NaivePointSet(List<Point> points) {
-        points = points;
+        this.points = points;
     }
     @Override
     public Point nearest(double x, double y) {

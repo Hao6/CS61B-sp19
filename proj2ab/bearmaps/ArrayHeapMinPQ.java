@@ -13,8 +13,8 @@ import java.util.*;
 public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
 
     private int size;
-    private List<Entry> heap;
-    private Map<T, Integer> keyMap;
+    private List<Entry> heap; // 堆
+    private Map<T, Integer> keyMap; //记录元素在堆（arraylist）中的下标
 
     public ArrayHeapMinPQ() {
         size = 0;
@@ -54,17 +54,17 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
 
     private void swap(int idx1, int idx2) {
         Entry tempEntry = heap.get(idx1);
-        heap.set(idx1, heap.get(idx2));
-        heap.set(idx2, tempEntry);
         keyMap.put(heap.get(idx1).data, idx2);
         keyMap.put(heap.get(idx2).data, idx1);
+        heap.set(idx1, heap.get(idx2));
+        heap.set(idx2, tempEntry);
     }
 
     private int adjustUpper(int curIdx) {
         while (curIdx != 0) {
-            if (heap.get(curIdx / 2).compareTo(heap.get(curIdx)) < 0) {
-                swap(curIdx, curIdx / 2);
-                curIdx /= 2;
+            if (heap.get((curIdx-1) / 2).compareTo(heap.get(curIdx)) > 0) {
+                swap(curIdx, (curIdx-1) / 2);
+                curIdx = (curIdx-1) / 2;
             } else {
                 break;
             }
@@ -102,28 +102,28 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         while (curIdx < size-1) {
             boolean left = false;
             boolean right = false;
-            if (curIdx * 2 < size - 1 &&
-                    heap.get(curIdx).compareTo(heap.get(curIdx * 2)) > 0) {
-                left = true;
-            }
             if (curIdx * 2 + 1 < size - 1 &&
                     heap.get(curIdx).compareTo(heap.get(curIdx * 2 + 1)) > 0) {
+                left = true;
+            }
+            if (curIdx * 2 + 2 < size - 1 &&
+                    heap.get(curIdx).compareTo(heap.get(curIdx * 2 + 2)) > 0) {
                 right = true;
             }
             if (left && right) { // 在左右中选择一个较小的置换
-                if (heap.get(curIdx * 2).compareTo(heap.get(curIdx * 2 + 1)) > 0) {
+                if (heap.get(curIdx * 2 + 1).compareTo(heap.get(curIdx * 2 + 2)) > 0) {
+                    swap(curIdx, curIdx * 2 + 2);
+                    curIdx = curIdx * 2 + 2;
+                } else {
                     swap(curIdx, curIdx * 2 + 1);
                     curIdx = curIdx * 2 + 1;
-                } else {
-                    swap(curIdx, curIdx * 2);
-                    curIdx *= 2;
                 }
             } else if (left) { // 与左边置换
-                swap(curIdx, curIdx * 2);
-                curIdx *= 2;
-            } else if (right) { // 与右边置换
                 swap(curIdx, curIdx * 2 + 1);
                 curIdx = curIdx * 2 + 1;
+            } else if (right) { // 与右边置换
+                swap(curIdx, curIdx * 2 + 2);
+                curIdx = curIdx * 2 + 2;
             } else { // 不用置换
                 break;
             }
@@ -139,6 +139,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         heap.set(0, heap.get(size-1));
         // 向下调整
         adjustDown(0);
+        heap.set(size-1, null);
         size -= 1;
         keyMap.remove(retEntry.data);
         return retEntry.data;
@@ -156,9 +157,18 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         }
         int curIdx = keyMap.get(item); // 获取当前元素在heap中的下标
         if (heap.get(curIdx).priority < priority) { // 向下调整
+            heap.get(curIdx).priority = priority;
             adjustDown(curIdx);
         } else if (heap.get(curIdx).priority > priority) { //向上调整
+            heap.get(curIdx).priority = priority;
             adjustUpper(curIdx);
         }
+    }
+
+    public void printPQ() {
+        for (int i = 0; i < size; i += 1) {
+            System.out.print(String.valueOf(heap.get(i).data) +" "+ heap.get(i).priority + " ");
+        }
+        System.out.println();
     }
 }

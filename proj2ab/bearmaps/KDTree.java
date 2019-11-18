@@ -101,7 +101,7 @@ public class KDTree {
         if (curNode == null) {
             return best;
         }
-        if (Point.distance(curNode.point, goal) < Point.distance(best.point, goal)) {
+        if (best == null || Point.distance(curNode.point, goal) < Point.distance(best.point, goal)) {
             best = curNode;
         }
         Node goodSide = null;
