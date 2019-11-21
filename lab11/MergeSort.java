@@ -38,12 +38,18 @@ public class MergeSort {
      *
      * @param   items  A Queue of items.
      * @return         A Queue of queues, each containing an item from items.
-     *
+     * 为什么要使用这个函数？？？不晓得
      */
     private static <Item extends Comparable> Queue<Queue<Item>>
             makeSingleItemQueues(Queue<Item> items) {
         // Your code here!
-        return null;
+        Queue<Queue<Item>> qQueue = new Queue<>();
+        for (Item item : items) {
+            Queue<Item> tempQueue = new Queue<>();
+            tempQueue.enqueue(item);
+            qQueue.enqueue(tempQueue);
+        }
+        return qQueue;
     }
 
     /**
@@ -62,7 +68,11 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
         // Your code here!
-        return null;
+        Queue<Item> resQueue = new Queue<>();
+        while (!q1.isEmpty() || !q2.isEmpty()) {
+            resQueue.enqueue(getMin(q1,q2));
+        }
+        return resQueue;
     }
 
     /**
@@ -78,6 +88,16 @@ public class MergeSort {
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
         // Your code here!
-        return items;
+        Queue<Queue<Item>> qQueue = makeSingleItemQueues(items);
+        while (qQueue.size() > 1) {
+            Queue<Item> q1 = qQueue.dequeue();
+            Queue<Item> q2 = qQueue.dequeue();
+            qQueue.enqueue(mergeSortedQueues(q1, q2));
+        }
+        if (qQueue.size() == 1) {
+            return qQueue.dequeue();
+        } else {
+            return null;
+        }
     }
 }
